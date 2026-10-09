@@ -31,9 +31,9 @@ Your system is missing dependencies (or they do not exist in $PATH):
 ╰───────────┴─────────────────────────────────────────────────────────╯
 ```
 Make sure you have installed the prerequisites for your OS: https://tauri.app/start/prerequisites/, then run:
-  cd mtokengui
-  cargo tauri android init
-  cargo tauri ios init
+  - cd mtokengui
+  - cargo tauri android init
+  - cargo tauri ios init
 
 For Desktop development, run:
   cargo tauri dev
