@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="styles.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>mtoken workspace</title>
+    <script type="module" src="/main.js" defer></script>
+  </head>
+
+  <body data-theme="dark">
+    <header class="titlebar" data-tauri-drag-region>
+      <nav class="window-controls" aria-label="Window controls">
+        <button class="window-control close-control" id="close-button" type="button" aria-label="Close window" title="Close"><span aria-hidden="true">&#x00D7;</span></button>
+        <button class="window-control" id="minimize-button" type="button" aria-label="Minimize window" title="Minimize"><span aria-hidden="true">&#x2212;</span></button>
+        <button class="window-control" id="maximize-button" type="button" aria-label="Maximize window" title="Maximize"><span aria-hidden="true">&#x2610;</span></button>
+      </nav>
+      <div class="window-brand" data-tauri-drag-region>
+        <span class="brand-mark">M</span>
+        <span>mtoken</span>
+      </div>
+    </header>
+
+    <div class="shell">
+      <aside class="sidebar">
+        <div class="brand-block">
+          <span class="brand-mark large">M</span>
+          <div>
+            <h2>mtoken</h2>
+            <small>workspace</small>
+          </div>
+        </div>
+
+      </aside>
+
+      <main class="workspace">
+        <header class="workspace-toolbar">
+          <div class="system-summary">
+            <small>Current system</small>
+            <strong id="system-info">Detecting...</strong>
+          </div>
+          <button class="workspace-close" id="workspace-close-button" type="button">
+            <span aria-hidden="true">&#x00D7;</span>
+            Close window
+          </button>
+        </header>
+
+        <section class="content-grid">
+
+          <article class="panel settings-panel">
+            <div class="panel-header">
+              <h3>Parameters</h3>
+            </div>
+            <div class="settings-list" id="settings-list">
+              <table>
+                <thead>
+                  <tr><th scope="col">Name</th><th scope="col">Value</th></tr>
+                </thead>
+                <tbody id="settings-rows"></tbody>
+              </table>
+            </div>
+            <div class="settings-actions">
+              <button class="action-button" data-action="add" type="button">Add</button>
+              <button class="action-button" data-action="edit" type="button" disabled>Edit</button>
+              <button class="action-button" data-action="delete" type="button" disabled>Delete</button>
+              <button class="action-button" data-action="submit" type="button">Submit</button>
+            </div>
+            <p id="settings-status" role="status" aria-live="polite"></p>
+            <dialog id="settings-editor">
+              <form id="settings-form">
+                <h3 id="settings-editor-title">Add entry</h3>
+                <label for="setting-name">Name</label>
+                <input id="setting-name" name="name" required />
+                <label for="setting-value">Value</label>
+                <input id="setting-value" name="value" required />
+                <div class="dialog-actions">
+                  <button class="action-button" id="settings-cancel" type="button">Cancel</button>
+                  <button class="action-button" type="submit">Save</button>
+                </div>
+              </form>
+            </dialog>
+          </article>
+
+        </section>
+      </main>
+    </div>
+  </body>
+</html>
