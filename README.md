@@ -17,18 +17,19 @@ npm create tauri-app@latest
 > npx
 > create-tauri-app
 
-✔ Project name · mtokengui
-✔ Identifier · com.mtoken.mtokengui
-✔ Choose which language to use for your frontend · Rust - (cargo)
-✔ Choose your UI template · Vanilla
+- Project name · mtokengui
+- Identifier · com.mtoken.mtokengui
+- Choose which language to use for your frontend · Rust - (cargo)
+- Choose your UI template · Vanilla
 
 Template created!
 
 Your system is missing dependencies (or they do not exist in $PATH):
+```
 ╭───────────┬─────────────────────────────────────────────────────────╮
 │ Tauri CLI │ Run `cargo install tauri-cli --version ^2.0.0 --locked` │
 ╰───────────┴─────────────────────────────────────────────────────────╯
-
+```
 Make sure you have installed the prerequisites for your OS: https://tauri.app/start/prerequisites/, then run:
   cd mtokengui
   cargo tauri android init
@@ -64,4 +65,5 @@ snapshot three times.
 
 ## rust_hdl
 
-We use rust_hdl framework to load config into FPGA 
+We use rust_hdl framework to load config into FPGA
+https://github.com/VHDL-LS/rust_hdl/
