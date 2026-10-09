@@ -1,13 +1,18 @@
-# Tauri + Vanilla
+# MToken GUI Tauri + Vanilla
 
-This template should help get you started developing with Tauri in vanilla HTML, CSS and Javascript.
+MToken is the main adminstrative GUI for mtoken to manage configuration with FPGA control.
+
+
+Tauri + Vanilla will help get you started developing with Tauri in vanilla HTML, CSS and Javascript.
 
 ## Recommended IDE Setup
 
-- [VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
+- [VS Code](https://code.visualstudio.com/) 
+- [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode)
+- [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
 
 
-tony@tonys-Air mtokenui % npm create tauri-app@latest
+npm create tauri-app@latest
 
 > npx
 > create-tauri-app
@@ -38,10 +43,6 @@ For Android development, run:
 For iOS development, run:
   cargo tauri ios dev
 
-tony@tonys-Air mtokenui % ls -ltr
-total 0
-drwxr-xr-x  7 tony  staff  224 Sep 21 21:18 mtokengui
-tony@tonys-Air mtokenui % cd 
 
 ## Redis and PostgreSQL
 
@@ -59,3 +60,8 @@ The PostgreSQL worker creates the `settings` table automatically. Redis stores
 the current JSON snapshot under the `mtoken:settings` key. If either service is
 unavailable, the cache remains available and the worker retries the queued
 snapshot three times.
+
+
+## rust_hdl
+
+We use rust_hdl framework to load config into FPGA 
