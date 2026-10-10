@@ -1,6 +1,6 @@
-# MToken GUI Tauri + Vanilla
+# MToken GUI
 
-MToken is the main adminstrative GUI for mtoken to manage configuration with FPGA control.
+MToken GUI is the main adminstrative front-end for mtoken to manage configuration within FPGA control.
 
 
 Tauri + Vanilla will help get you started developing with Tauri in vanilla HTML, CSS and Javascript.
