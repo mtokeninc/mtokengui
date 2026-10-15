@@ -1,31 +1,38 @@
 use rust_hdl::prelude::*;
 
+use crate::SettingItem;
+
 // Define a module with a parameter
-#[derive(Clone, Debug, Default)]
+#[derive(LogicBlock, Clone, Debug, Default)]
 pub struct ParamModule {
-    pub param_value: u32, // Rust field that will be turned into a Verilog parameter
+    pub param_value: Signal<Out, Bits<32>>,
+    //pub param_value: u32, // Rust field that will be turned into a Verilog parameter
 }
 
 impl Logic for ParamModule {
     fn update(&mut self) {
-        // Use param_value in logic
     }
 }
 
-fn set(param : u32) {
+pub fn on_submit_success(settings: &[SettingItem]) -> Result<(), String> {
+    let high = settings
+        .first()
+        .ok_or("submit requires at least two settings")?
+        .value
+        .parse::<u16>()
+        .map_err(|error| format!("first submitted setting is not a u16: {}", error))?;
+    let low = settings
+        .get(1)
+        .ok_or("submit requires at least two settings")?
+        .value
+        .parse::<u16>()
+        .map_err(|error| format!("second submitted setting is not a u16: {}", error))?;
+    let param_value = u16_to_u32(high, low);
     let mut module = ParamModule::default();
-    module.param_value = param; // Set before generating Verilog
-    // Generate Verilog
+    module.param_value.next = (param_value as u64).into();
     let verilog_code = generate_verilog(&module);
     println!("{}", verilog_code);
-}
-
-fn set(param1 : u16, param2 : u16) {
-    let mut module = ParamModule::default();
-    module.param_value = u16_to_u32(param1, param2); // Set before generating Verilog
-    // Generate Verilog
-    let verilog_code = generate_verilog(&module);
-    println!("{}", verilog_code);
+    Ok(())
 }
 
 /// Combines two u16 values into a u32.

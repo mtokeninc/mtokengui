@@ -5,6 +5,9 @@ use std::path::PathBuf;
 use std::sync::{mpsc, Arc, RwLock};
 use std::thread;
 use tauri::Manager;
+
+mod rust_fpga;
+
 const REDIS_SETTINGS_KEY: &str = "mtoken:settings";
 
 #[derive(Serialize)]
@@ -61,6 +64,7 @@ struct UpdateResult {
 
 struct CommitJob {
     settings: Vec<SettingItem>,
+    run_logic_after_commit: bool,
 }
 
 struct SettingsStore {
@@ -117,10 +121,11 @@ impl SettingsStore {
             .map_err(|error| format!("could not flush records.csv: {}", error))
     }
 
-    fn enqueue(&self) -> Result<(), String> {
+    fn enqueue(&self, run_logic_after_commit: bool) -> Result<(), String> {
         self.queue
             .try_send(CommitJob {
                 settings: self.to_items(),
+                run_logic_after_commit,
             })
             .map_err(|error| format!("settings commit queue is unavailable: {}", error))
     }
@@ -162,6 +167,10 @@ fn commit_worker(receiver: mpsc::Receiver<CommitJob>) {
 
         if !committed {
             eprintln!("settings commit abandoned after 3 attempts; the cache remains available");
+        } else if job.run_logic_after_commit {
+            if let Err(error) = rust_fpga::on_submit_success(&job.settings) {
+                eprintln!("post-submit FPGA logic failed: {}", error);
+            }
         }
     }
 }
@@ -250,7 +259,7 @@ fn add_setting(item: SettingItem, state: tauri::State<'_, Arc<SettingsStore>>) -
     cache.push(item.clone());
     drop(cache);
 
-    match state.enqueue() {
+    match state.enqueue(false) {
         Ok(_) => AddResult {
             added: true,
             queued: true,
@@ -282,7 +291,7 @@ fn update_setting(item: SettingItem, state: tauri::State<'_, Arc<SettingsStore>>
     }
     drop(cache);
 
-    match state.enqueue() {
+    match state.enqueue(false) {
         Ok(_) => UpdateResult {
             updated: true,
             queued: true,
@@ -326,7 +335,7 @@ fn submit_settings(
 
     let records_path = state.records_path.display().to_string();
 
-    match state.enqueue() {
+    match state.enqueue(true) {
         Ok(_) => SubmitResult {
             saved: true,
             queued: true,
@@ -340,6 +349,9 @@ fn submit_settings(
             message: format!("Saved {} entries to {}; remote sync unavailable: {}", count, records_path, err),
         },
     }
+
+
+
 }
 
 #[tauri::command]
@@ -352,7 +364,7 @@ fn delete_setting(key: String, state: tauri::State<'_, Arc<SettingsStore>>) -> D
     }
 
     let remaining_count = state.to_items().len();
-    match state.enqueue() {
+    match state.enqueue(false) {
         Ok(_) => DeleteResult {
             deleted: true,
             queued: true,
@@ -423,5 +435,6 @@ mod tests {
         assert_eq!(read_records(&path).unwrap()[0].key, "Display name");
         assert_eq!(read_records(&path).unwrap()[0].value, "A, B");
         fs::remove_file(path).unwrap();
+
     }
 }
