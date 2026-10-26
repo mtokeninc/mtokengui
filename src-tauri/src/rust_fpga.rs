@@ -1,3 +1,4 @@
+use core::ptr;
 use rust_hdl::prelude::*;
 
 use crate::SettingItem;
@@ -30,6 +31,7 @@ pub fn on_submit_success(settings: &[SettingItem]) -> Result<(), String> {
     let param_value = u16_to_u32(high, low);
     let mut module = ParamModule::default();
     module.param_value.next = (param_value as u64).into();
+    module.update();
     let verilog_code = generate_verilog(&module);
     println!("{}", verilog_code);
     Ok(())
@@ -49,6 +51,24 @@ fn u32_to_u16(value: u32) -> (u16, u16) {
     (high, low)
 }
 
+
+/// Writes an unsigned 32-bit value to a memory-mapped CPU register.
+///
+/// # Safety
+/// This function is unsafe because writing to arbitrary memory addresses
+/// can cause undefined behavior if the address is invalid or not aligned.
+///
+/// `addr` - The memory address of the register.
+/// `value` - The unsigned integer value to write.
+unsafe fn write_register(addr: u32, value: u32) {
+    // Cast the address to a mutable pointer to a volatile u32
+    let reg_ptr = addr as *mut u32;
+
+    // Use `write_volatile` to ensure the compiler does not optimize away the write
+    ptr::write_volatile(reg_ptr, value);
+}
+
+
 #[cfg(test)]
 mod tests {
     use super::*; // Imports everything from the outer module so you can test it
@@ -66,4 +86,19 @@ mod tests {
         assert_eq!(high, 0x1234);
         assert_eq!(low, 0x5678);
     }
+
+    #[test]
+    fn test_write_register() {
+        // mock address
+        const CPU_REGISTER_ADDR: u32 = 0x0002_1000;
+
+        // The value we want to write
+        let value_to_write: u32 = u16_to_u32(0x1234, 0x5678);;
+
+        // SAFETY: Ensure the address is valid for your hardware
+        unsafe {
+            write_register(CPU_REGISTER_ADDR, value_to_write);
+        }
+    }
+
 }
